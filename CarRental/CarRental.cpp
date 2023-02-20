@@ -1,12 +1,16 @@
-﻿// CarRental.cpp : Defines the entry point for the application.
-//
-
-#include "CarRental.h"
+﻿#include "CarRental.h"
+#include "Sockets/Socket.h"
 
 using namespace std;
 
+/*
+*	TODOs:
+	[] - Destructor in each class
+*/
+
+Socket sockets;
 int main()
 {
-	cout << "Hello CMake." << endl;
+	sockets.init();
 	return 0;
 }
