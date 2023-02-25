@@ -2,4 +2,6 @@
 
 project ("CarRental")
 
-add_executable (CarRental "CarRental.cpp" "CarRental.h"  "Sockets/Socket.cpp" "Sockets/ISocket.h" "Sockets/Socket.h" "Include/Errors.h")
+add_executable (CarRentalServer "CarRentalServer.cpp" "CarRental.h"  "Sockets/WinSocket.cpp" "Sockets/ISocket.h" "Sockets/WinSocket.h" "Include/Errors.h" "DB/Database.h" "DB/FileDb.cpp" "Processor/Processor.h" "Processor/Processor.cpp" "Login/Login.h" "Login/DummyLogin.cpp" "DB/IDatabase.h" "Login/ILogin.h")
+
+add_executable (CarRentalClient "CarRentalClient.cpp" "Client/Client.h" "Client/Client.cpp" "Client/IClient.h")

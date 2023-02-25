@@ -1,4 +1,6 @@
 #pragma once
+#include "../DB/IDatabase.h"
+#include "../Login/ILogin.h"
 
 #include <iostream>
 
@@ -8,4 +10,5 @@ class ISocket
 {
 public:
 	virtual void init() = 0;
+	virtual void run(IDatabase const& db, ILogin const& login) = 0;
 };
