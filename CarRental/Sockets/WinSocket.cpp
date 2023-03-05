@@ -1,5 +1,9 @@
 #include "WinSocket.h"
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include "../Include/Utils.h"
 #include "../Include/Errors.h"
 
 using namespace std;
@@ -43,6 +47,8 @@ void WinSocket::run(IDatabase const& db, ILogin const& login) {
 		int socketNumber = select(0, &copy,				//	copy will be destroyed
 			nullptr, nullptr, nullptr);
 
+		unordered_map<SOCKET, string> socketsStatus;
+
 		for (int i = 0; i < socketNumber; i++) {
 			SOCKET currentSocket = copy.fd_array[i];	//	i-th element
 
@@ -50,6 +56,7 @@ void WinSocket::run(IDatabase const& db, ILogin const& login) {
 				//	accept new connection
 				SOCKET client = accept(this->listening, nullptr, nullptr);
 				FD_SET(client, &master);				//	add client to list of connected clients(so we can listen again)
+
 				string welcomeMsg = "Welcome to the chat\n";
 				send(client, welcomeMsg.c_str(), welcomeMsg.size(), 0);
 			}
@@ -59,20 +66,24 @@ void WinSocket::run(IDatabase const& db, ILogin const& login) {
 				ZeroMemory(buff, 4096);
 
 				int bytes = recv(currentSocket, buff, 4096, 0);
-				cout << buff << endl;
 				if (bytes <= 0) {		//	no message
 					closesocket(currentSocket);
 					FD_CLR(currentSocket, &master);		//	clear from connected clients
+					continue;
 				}
-				else
-				{
-					for (int i = 0; i < master.fd_count; i++) {
-						SOCKET outSock = master.fd_array[i];
-						//	dont sent to listener and current socket
-						if (outSock != this->listening && outSock != currentSocket) {
-							send(outSock, buff, bytes, 0);
-						}
-					}
+				string s(buff), command;
+				stringstream ss(s);
+				getline(ss, command, delimetr);
+				
+				if (command == "login") {
+					string login, pass;
+					getline(ss, login, delimetr);
+					getline(ss, pass, delimetr);
+					cout << "log: " << login << "pas: " << pass << endl;
+					//	ADD TRY LOGIN
+				}
+				else if (command == "createNewUser") {
+
 				}
 			}
 		}

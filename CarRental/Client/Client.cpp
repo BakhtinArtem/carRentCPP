@@ -59,13 +59,14 @@ void Client::run() {
 	}
 
 	while (true) {
-		/*string msg;
+
+		string msg;
 		getline(cin, msg);
-		send(this->clientSocket, msg.c_str(), msg.size(), 0);*/
-		char buff[4096];
+		send(this->clientSocket, msg.c_str(), msg.size(), 0);
+		/*char buff[4096];
 		ZeroMemory(buff, 4096);
 
 		int bytes = recv(this->clientSocket, buff, 4096, 0);
-		cout << buff;
+		cout << buff;*/
 	}
 }
