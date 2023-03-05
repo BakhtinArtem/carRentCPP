@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Processor::processConnection(ISocket &socket, IDatabase const& db, ILogin const& login) {
+void Processor::processConnection(ISocket &socket, IDatabase& db, ILogin& login) {
 	socket.run(db, login);
 }
 

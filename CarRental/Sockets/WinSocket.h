@@ -9,7 +9,13 @@ class WinSocket : public ISocket
 {
 public:
 	void init();
-	void run(IDatabase const& db, ILogin const& login);
+	void run(IDatabase& db, ILogin& login);
 private:
+	void initMasterSet();
+	void acceptClient();
+	void processRequest(const SOCKET& currentSocket, IDatabase& db, ILogin& login);
+	void disconnectClient(const SOCKET& currentSocket);
+	void processLogin(stringstream& buffStream, IDatabase& db, ILogin& login);
 	SOCKET listening;
+	fd_set master;
 };

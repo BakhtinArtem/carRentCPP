@@ -10,5 +10,5 @@ class ISocket
 {
 public:
 	virtual void init() = 0;
-	virtual void run(IDatabase const& db, ILogin const& login) = 0;
+	virtual void run(IDatabase& db, ILogin& login) = 0;
 };

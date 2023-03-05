@@ -6,6 +6,6 @@
 class Processor
 {
 public:
-	void processConnection(ISocket &socket, IDatabase const& db, ILogin const& login);
+	void processConnection(ISocket &socket, IDatabase& db, ILogin& login);
 	void init(ISocket& socket, IDatabase& db, ILogin& login);
 };
