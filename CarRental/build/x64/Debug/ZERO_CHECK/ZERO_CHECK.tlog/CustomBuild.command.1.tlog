@@ -1,0 +1,10 @@
+^C:\USERS\BAKHT\DOWNLOADS\CARRENTCPP\CARRENTAL\BUILD\CMAKEFILES\5E64602DA09CFFB0A7065EE68B642EAC\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/bakht/Downloads/carRentCPP/CarRental -BC:/Users/bakht/Downloads/carRentCPP/CarRental/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/bakht/Downloads/carRentCPP/CarRental/build/CarRental.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

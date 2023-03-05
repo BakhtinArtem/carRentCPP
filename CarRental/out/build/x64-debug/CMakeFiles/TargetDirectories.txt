@@ -1,0 +1,4 @@
+C:/Users/bakht/Downloads/carRentCPP/CarRental/out/build/x64-debug/CMakeFiles/CarRentalServer.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/out/build/x64-debug/CMakeFiles/CarRentalClient.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/out/build/x64-debug/CMakeFiles/edit_cache.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/out/build/x64-debug/CMakeFiles/rebuild_cache.dir

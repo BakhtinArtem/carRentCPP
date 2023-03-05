@@ -1,0 +1,4 @@
+C:/Users/bakht/Downloads/carRentCPP/CarRental/build/CMakeFiles/CarRentalServer.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/build/CMakeFiles/CarRentalClient.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/bakht/Downloads/carRentCPP/CarRental/build/CMakeFiles/ZERO_CHECK.dir
