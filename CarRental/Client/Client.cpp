@@ -70,9 +70,9 @@ void Client::run() {
 		ZeroMemory(buff, 4096);
 		
 		if (this->state == login) {
-			string token = this->processLogin(buff);
+			this->token = this->processLogin(buff);
 			this->state = process;
-			cout << "this is: " << token << endl;
+			cout << "this is: " << this->token << endl;
 		}
 		else if (this->state == process) {
 
@@ -89,7 +89,7 @@ string Client::processLogin(char* buff)
 	//	get response
 	recv(this->clientSocket, buff, 4096, 0);
 	if (buff == UNSUCCESSFUL_LOGIN_RESPONSE) {
-		return "no";
+		return "";
 	}
 
 	return string(buff);		//	wrap buffer to string

@@ -111,7 +111,8 @@ void WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStre
 		getline(buffStream, pass, delimetr);
 		if (login.userExist(name, pass, db)) {
 			cout << "yes user" << endl;
-			string token = "token124";
+			string token = login.getSessionToken(name, pass);
+			cout << token << endl;
 			send(currentSocket, token.c_str(),
 				token.size(), 0);
 		}

@@ -1,4 +1,5 @@
 #include "Login.h"
+#include <sstream>
 
 using namespace std;
 
@@ -8,7 +9,14 @@ void Login::init() {
 
 bool Login::userExist(const string& name, const string& pass, IDatabase& db)
 {
-	cout << db.findUserByNamePass(name, pass) << endl;
-	cout << (db.findUserByNamePass(name, pass) >= 0) << endl;
 	return db.findUserByNamePass(name, pass) >= 0;		//	check if some index was found
+}
+
+string Login::getSessionToken(const string& name, const string& pass)
+{
+	hash<string> hasher;
+	size_t t = hasher(name + pass);
+	vector<string> pair = {name, pass};		//	container with vector and pass
+	this->sessionStorage.insert({ to_string(t), pair });
+	return to_string(t);
 }

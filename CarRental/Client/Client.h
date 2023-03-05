@@ -18,4 +18,5 @@ private:
 	string processLogin(char* buff);
 	SOCKET clientSocket;
 	CLIENT_STATE state;
+	string token;
 };
