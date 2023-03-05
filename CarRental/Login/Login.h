@@ -6,5 +6,5 @@ class Login : public ILogin
 {
 public:
 	void init();
-	void userExist(IDatabase& db);
+	bool userExist(const string& name, const string& pass, IDatabase& db);
 };

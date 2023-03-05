@@ -45,9 +45,11 @@ void WinSocket::run(IDatabase& db, ILogin& login) {
 			SOCKET currentSocket = copy.fd_array[i];	//	i-th element
 
 			if (currentSocket == this->listening) {
+				cout << "inside accept" << endl;
 				acceptClient();
 			}
 			else {
+				cout << "inside process" << endl;
 				processRequest(currentSocket, db, login);
 			}
 		}
@@ -64,33 +66,34 @@ void WinSocket::initMasterSet()
 
 void WinSocket::acceptClient()
 {
-	//	accept new connection
-	SOCKET client = accept(this->listening, nullptr, nullptr);
-	FD_SET(client, &this->master);			//	add client to list of connected clients(so we can listen again)
-	string welcomeMsg = SUCCESSFUL_CONNECTION + "\n";
-	send(client, welcomeMsg.c_str(), welcomeMsg.size(), 0);	//	send ok response
+	SOCKET client = accept(this->listening, nullptr, nullptr);	//	accept new connection
+	FD_SET(client, &this->master);								//	add client to list of connected clients(so we can listen again)
+	//	send ok response
+	send(client, SUCCESSFUL_CONNECTION_RESPONSE.c_str(), SUCCESSFUL_CONNECTION_RESPONSE.size(), 0);
 }
 
 void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogin& login)
 {
-	char buff[4096];			//	buffer for new request
+	char buff[4096];								//	buffer for new request
 	ZeroMemory(buff, 4096);
 
 	int bytes = recv(currentSocket, buff, 4096, 0);	//	recieve request
 	if (bytes <= 0) {								//	no message
+		cout << "inside disconnect" << endl;
 		disconnectClient(currentSocket);
 	}
 
-	string stringBuffer(buff);			//	convert buff to string
+	string stringBuffer(buff);						//	convert buff to string
 	string request;
 	stringstream buffStream(stringBuffer);
 	getline(buffStream, request, delimetr);
 				
 	if (request == REQUEST_LOGIN) {
-		processLogin(buffStream, db, login);
+		cout << "inside login" << endl;
+		processLogin(currentSocket, buffStream, db, login);
 	}
 	else if (request == REQUEST_NEW_USER) {
-		
+		cout << "inside request" << endl;
 	}
 }
 
@@ -100,14 +103,21 @@ void WinSocket::disconnectClient(const SOCKET& currentSocket)
 		FD_CLR(currentSocket, &this->master);		//	clear from connected clients
 }
 
-void WinSocket::processLogin(stringstream& buffStream, IDatabase& db, ILogin& login)
+void WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStream,
+	IDatabase& db, ILogin& login)
 {
 		string name, pass;
 		getline(buffStream, name, delimetr);
 		getline(buffStream, pass, delimetr);
-		login.userExist(db);
-		cout << "log: " << name << " pas: " << pass << endl;
+		if (login.userExist(name, pass, db)) {
+			cout << "yes user" << endl;
+			string token = "token124";
+			send(currentSocket, token.c_str(),
+				token.size(), 0);
+		}
+		else {
+			cout << "no user" << endl; 
+			send(currentSocket, UNSUCCESSFUL_LOGIN_RESPONSE.c_str(),
+				UNSUCCESSFUL_LOGIN_RESPONSE.size(), 0);
+		}
 }
-
-
-

@@ -15,7 +15,8 @@ private:
 	void acceptClient();
 	void processRequest(const SOCKET& currentSocket, IDatabase& db, ILogin& login);
 	void disconnectClient(const SOCKET& currentSocket);
-	void processLogin(stringstream& buffStream, IDatabase& db, ILogin& login);
+	void processLogin(const SOCKET& currentSocket, stringstream& buffStream,
+		IDatabase& db, ILogin& login);
 	SOCKET listening;
 	fd_set master;
 };

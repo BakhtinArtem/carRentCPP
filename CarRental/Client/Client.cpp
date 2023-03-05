@@ -2,6 +2,7 @@
 
 //	User
 #include "../Include/Errors.h"
+#include "../Include/Utils.h"
 #include "Client.h"
 
 //	Sockets
@@ -58,15 +59,41 @@ void Client::run() {
 		return;
 	}
 
+	char buff[4096];
+	ZeroMemory(buff, 4096);
+		
+	recv(this->clientSocket, buff, 4096, 0);
+	cout << buff << endl;		//	get response from server
+	this->state = login;
+
 	while (true) {
-
-		string msg;
-		getline(cin, msg);
-		send(this->clientSocket, msg.c_str(), msg.size(), 0);
-		/*char buff[4096];
 		ZeroMemory(buff, 4096);
+		
+		if (this->state == login) {
+			string token = this->processLogin(buff);
+			this->state = process;
+			cout << "this is: " << token << endl;
+		}
+		else if (this->state == process) {
 
-		int bytes = recv(this->clientSocket, buff, 4096, 0);
-		cout << buff;*/
+		}
 	}
 }
+
+string Client::processLogin(char* buff)
+{
+	string data;
+	getline(cin, data);
+	//	send login info
+	send(this->clientSocket, data.c_str(), data.size(), 0);
+	//	get response
+	recv(this->clientSocket, buff, 4096, 0);
+	if (buff == UNSUCCESSFUL_LOGIN_RESPONSE) {
+		return "no";
+	}
+
+	return string(buff);		//	wrap buffer to string
+}
+
+
+

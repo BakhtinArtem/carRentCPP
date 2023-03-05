@@ -1,7 +1,12 @@
 #pragma once
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 class IDatabase
 {
 public:
 	virtual void init() = 0;
+	virtual int findUserByNamePass(const string& name, const string& pass) = 0;
 };
