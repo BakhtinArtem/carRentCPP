@@ -4,6 +4,9 @@ Client-Server application, where users can connect to a server and rent a car. N
 ## Login
 The server allows client to authorize using a name and password. Not registred users can create new name-password pair. After the user logged in the system a session token is created. Session token is used for simplifing interaction between client and server.
 
+## Configuration
+`.exe` files can be generated using CMake.
+
 ## Database
 All inforamtion about user, cars and orders is saved to txt file in DB/Files directory. Information is available after server restarting. 
 
