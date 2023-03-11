@@ -90,11 +90,19 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 				
 	if (request == REQUEST_LOGIN) {
 		cout << "inside login" << endl;
-		processLogin(currentSocket, buffStream, db, login);
+		if (processLogin(currentSocket, buffStream, db, login)) {
+			sendAvailableCars(currentSocket, db);
+		}
 	}
 	else if (request == REQUEST_NEW_USER) {
 		cout << "inside request" << endl;
 	}
+}
+
+void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {
+	//	const string cars = db.getAllCars();
+	const string cars = "0;skoda;busy\n1;toyota;available";
+	send(currentSocket, cars.c_str(), cars.size(), 0);
 }
 
 void WinSocket::disconnectClient(const SOCKET& currentSocket)
@@ -103,7 +111,7 @@ void WinSocket::disconnectClient(const SOCKET& currentSocket)
 		FD_CLR(currentSocket, &this->master);		//	clear from connected clients
 }
 
-void WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStream,
+bool WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStream,
 	IDatabase& db, ILogin& login)
 {
 		string name, pass;
@@ -115,10 +123,12 @@ void WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStre
 			cout << token << endl;
 			send(currentSocket, token.c_str(),
 				token.size(), 0);
+			return true;		//	login was successful
 		}
 		else {
 			cout << "no user" << endl; 
 			send(currentSocket, UNSUCCESSFUL_LOGIN_RESPONSE.c_str(),
 				UNSUCCESSFUL_LOGIN_RESPONSE.size(), 0);
+			return false;		//	login was unsuccessful
 		}
 }

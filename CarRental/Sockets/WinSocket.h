@@ -15,8 +15,9 @@ private:
 	void acceptClient();
 	void processRequest(const SOCKET& currentSocket, IDatabase& db, ILogin& login);
 	void disconnectClient(const SOCKET& currentSocket);
-	void processLogin(const SOCKET& currentSocket, stringstream& buffStream,
+	bool processLogin(const SOCKET& currentSocket, stringstream& buffStream,
 		IDatabase& db, ILogin& login);
+	void sendAvailableCars(const SOCKET& currentSocket, IDatabase& db);
 	SOCKET listening;
 	fd_set master;
 };

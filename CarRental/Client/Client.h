@@ -7,13 +7,16 @@ using namespace std;
 
 enum CLIENT_STATE {
 	login,
-	process
+	processReservation,
+	error
 };
 
 class Client : public IClient
 {
 public:
 	void run();
+	void processConection();
+	bool configureConnection();
 private:
 	string processLogin(char* buff);
 	SOCKET clientSocket;

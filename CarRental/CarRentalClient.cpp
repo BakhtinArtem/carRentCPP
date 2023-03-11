@@ -5,6 +5,7 @@
 using namespace std;
 
 Client client;
+
 int main() {
 	client.run();
 	return 0;

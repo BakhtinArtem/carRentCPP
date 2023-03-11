@@ -17,6 +17,15 @@ using namespace std;
 #pragma comment (lib, "ws2_32.lib")
 
 void Client::run() {
+	if (!configureConnection()) {
+		return;				//	configuration was successful 
+	}
+	processConection();
+}
+
+
+bool Client::configureConnection()
+{
 	WSADATA socket_data;
 	ADDRINFO hints;
 	ADDRINFO* addrResult = NULL;
@@ -26,7 +35,7 @@ void Client::run() {
 	response = WSAStartup(MAKEWORD(2,2), &socket_data);
 	if (response != 0) {								//	error while initializing socket
 		cerr << UNABLE_INIT_SOCKET_ERR << endl;
-		return;											//	quit initialization
+		return false;									//	quit initialization
 	}
 
 	ZeroMemory(&hints, sizeof(hints));					//	set zero to all fields -> they will be ignored
@@ -38,7 +47,7 @@ void Client::run() {
 	if (response != 0) {								//	error while creating socker
 		cerr << UNABLE_CREATE_SOCKET_ERR << endl;
 		WSACleanup();									//	clean wsa
-		return;
+		return false;
 	}
 
 	this->clientSocket = socket(addrResult->ai_family, addrResult->ai_socktype, addrResult->ai_protocol);
@@ -46,7 +55,7 @@ void Client::run() {
 		cerr << UNABLE_CREATE_SOCKET_ERR << endl;
 		freeaddrinfo(addrResult);
 		WSACleanup();
-		return;
+		return false;
 	}
 
 	response = connect(this->clientSocket, addrResult->ai_addr, (int)addrResult->ai_addrlen);
@@ -56,14 +65,18 @@ void Client::run() {
 		this->clientSocket = INVALID_SOCKET;
 		freeaddrinfo(addrResult);
 		WSACleanup();
-		return;
+		return false;
 	}
+	return true;		//	configuartion was successful
+}
 
+void Client::processConection()
+{
 	char buff[4096];
 	ZeroMemory(buff, 4096);
 		
 	recv(this->clientSocket, buff, 4096, 0);
-	cout << buff << endl;		//	get response from server
+	cout << buff << endl;		//	get positivr response from server
 	this->state = login;
 
 	while (true) {
@@ -71,27 +84,36 @@ void Client::run() {
 		
 		if (this->state == login) {
 			this->token = this->processLogin(buff);
-			this->state = process;
-			cout << "this is: " << this->token << endl;
+			if (this->state == error) {
+				cout << "Login was unsuccessful" << endl;
+				return;			//	login was unsuccessful
+			}
+			this->state = processReservation;
 		}
-		else if (this->state == process) {
-
+		else if (this->state == processReservation) {
+			recv(this->clientSocket, buff, 4096, 0);
+			cout << "cars" << endl;
+			cout << buff << endl;
 		}
 	}
 }
 
 string Client::processLogin(char* buff)
 {
-	string data;
-	getline(cin, data);
-	//	send login info
-	send(this->clientSocket, data.c_str(), data.size(), 0);
+	string login, pass, request;
+	cout << "Please enter login:" << endl;
+	getline(cin, login);
+	cout << "Please enter password:" << endl;
+	getline(cin, pass);
+	request = "login;" + login + ";" + pass;
+	//	send request to sever
+	send(this->clientSocket, request.c_str(), request.size(), 0);
 	//	get response
 	recv(this->clientSocket, buff, 4096, 0);
 	if (buff == UNSUCCESSFUL_LOGIN_RESPONSE) {
-		return "";
+		this->state = error;		//	error while login
+		return "";					//	empty token
 	}
-
 	return string(buff);		//	wrap buffer to string
 }
 
