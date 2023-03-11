@@ -97,6 +97,22 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 	else if (request == REQUEST_NEW_USER) {
 		cout << "inside request" << endl;
 	}
+	else if (request == REQUEST_RESERVATION) {
+		if (!processReservation(currentSocket, buffStream, db)) {
+			cout << "PRObbBBlem" << endl;
+			return;		//	can not reserv
+		}
+		send(currentSocket, OK_RESPONE.c_str(), OK_RESPONE.size(), 0);
+	}
+}
+
+bool WinSocket::processReservation(const SOCKET& currentSocket, stringstream& buffStream, IDatabase& db)
+{
+	string token, id;
+	getline(buffStream, token, delimetr);
+	getline(buffStream, id, delimetr);
+	cout << "GOT " << token << " " << id << endl;
+	return true;
 }
 
 void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {
@@ -104,6 +120,7 @@ void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {
 	const string cars = "0;skoda;busy\n1;toyota;available";
 	send(currentSocket, cars.c_str(), cars.size(), 0);
 }
+
 
 void WinSocket::disconnectClient(const SOCKET& currentSocket)
 {

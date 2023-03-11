@@ -70,6 +70,7 @@ bool Client::configureConnection()
 	return true;		//	configuartion was successful
 }
 
+
 void Client::processConection()
 {
 	char buff[4096];
@@ -88,14 +89,33 @@ void Client::processConection()
 				cout << "Login was unsuccessful" << endl;
 				return;			//	login was unsuccessful
 			}
-			this->state = processReservation;
+			this->state = reservation;
 		}
-		else if (this->state == processReservation) {
-			recv(this->clientSocket, buff, 4096, 0);
-			cout << "cars" << endl;
-			cout << buff << endl;
+		else if (this->state == reservation) {
+			processReservation(buff);
+			if (this->state == error) {
+				cout << "Reservation was unsuccessful" << endl;
+				return;
+			}
+			this->state = idle;
 		}
 	}
+}
+
+void Client::processReservation(char* buff)
+{
+	recv(this->clientSocket, buff, 4096, 0);
+	cout << buff << endl;
+	cout << "Choose car id to reserve:" << endl;
+	string id, request;
+	getline(cin, id);
+	request = REQUEST_RESERVATION + ";" + this->token + ";" + id;
+	//	send reservation request to server
+	send(this->clientSocket, request.c_str(), request.size(), 0);
+	//	get response from server
+	ZeroMemory(buff, 4096);
+	recv(this->clientSocket, buff, 4096, 0);
+	cout << buff << endl;
 }
 
 string Client::processLogin(char* buff)
@@ -105,7 +125,7 @@ string Client::processLogin(char* buff)
 	getline(cin, login);
 	cout << "Please enter password:" << endl;
 	getline(cin, pass);
-	request = "login;" + login + ";" + pass;
+	request = REQUEST_LOGIN + ";" + login + ";" + pass;
 	//	send request to sever
 	send(this->clientSocket, request.c_str(), request.size(), 0);
 	//	get response

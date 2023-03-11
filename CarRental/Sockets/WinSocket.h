@@ -18,6 +18,7 @@ private:
 	bool processLogin(const SOCKET& currentSocket, stringstream& buffStream,
 		IDatabase& db, ILogin& login);
 	void sendAvailableCars(const SOCKET& currentSocket, IDatabase& db);
+	bool processReservation(const SOCKET& currentSocket, stringstream& buffStream, IDatabase& db);
 	SOCKET listening;
 	fd_set master;
 };
