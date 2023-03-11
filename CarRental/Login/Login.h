@@ -11,7 +11,8 @@ class Login : public ILogin
 public:
 	void init();
 	bool userExist(const string& name, const string& pass, IDatabase& db);
-	string getSessionToken(const string& name, const string& pass);
+	string getSessionToken(IDatabase& db, const string& name, const string& pass);
+	string getUserId(const string& token);
 private:
-	unordered_map<string, vector<string>> sessionStorage;
+	unordered_map<string, string> sessionStorage;
 };

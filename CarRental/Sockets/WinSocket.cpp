@@ -99,7 +99,7 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 	}
 	else if (request == REQUEST_RESERVATION) {
 		if (!processReservation(currentSocket, buffStream, db)) {
-			cout << "PRObbBBlem" << endl;
+			send(currentSocket, CAR_UNAVAILABLE.c_str(), CAR_UNAVAILABLE.size(), 0);
 			return;		//	can not reserv
 		}
 		send(currentSocket, OK_RESPONE.c_str(), OK_RESPONE.size(), 0);
@@ -111,41 +111,42 @@ bool WinSocket::processReservation(const SOCKET& currentSocket, stringstream& bu
 	string token, id;
 	getline(buffStream, token, delimetr);
 	getline(buffStream, id, delimetr);
-	cout << "GOT " << token << " " << id << endl;
+	if (db.carIsReserved(id)) {
+		return false;
+	}
 	return true;
 }
 
 void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {
-	//	const string cars = db.getAllCars();
-	const string cars = "0;skoda;busy\n1;toyota;available";
+	const string cars = db.getAllCars();
 	send(currentSocket, cars.c_str(), cars.size(), 0);
 }
 
 
 void WinSocket::disconnectClient(const SOCKET& currentSocket)
 {
-		closesocket(currentSocket);
-		FD_CLR(currentSocket, &this->master);		//	clear from connected clients
+	closesocket(currentSocket);
+	FD_CLR(currentSocket, &this->master);		//	clear from connected clients
 }
 
 bool WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStream,
 	IDatabase& db, ILogin& login)
 {
-		string name, pass;
-		getline(buffStream, name, delimetr);
-		getline(buffStream, pass, delimetr);
-		if (login.userExist(name, pass, db)) {
-			cout << "yes user" << endl;
-			string token = login.getSessionToken(name, pass);
-			cout << token << endl;
-			send(currentSocket, token.c_str(),
-				token.size(), 0);
-			return true;		//	login was successful
-		}
-		else {
-			cout << "no user" << endl; 
-			send(currentSocket, UNSUCCESSFUL_LOGIN_RESPONSE.c_str(),
-				UNSUCCESSFUL_LOGIN_RESPONSE.size(), 0);
-			return false;		//	login was unsuccessful
-		}
+	string name, pass;
+	getline(buffStream, name, delimetr);
+	getline(buffStream, pass, delimetr);
+	if (login.userExist(name, pass, db)) {
+		cout << "yes user" << endl;
+		string token = login.getSessionToken(db, name, pass);
+		cout << token << endl;
+		send(currentSocket, token.c_str(),
+			token.size(), 0);
+		return true;		//	login was successful
+	}
+	else {
+		cout << "no user" << endl; 
+		send(currentSocket, UNSUCCESSFUL_LOGIN_RESPONSE.c_str(),
+			UNSUCCESSFUL_LOGIN_RESPONSE.size(), 0);
+		return false;		//	login was unsuccessful
+	}
 }
