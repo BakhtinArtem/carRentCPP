@@ -8,6 +8,7 @@ using namespace std;
 enum CLIENT_STATE {
 	login,
 	reservation,
+	endReservation,
 	idle,
 	error
 };
@@ -19,6 +20,7 @@ public:
 	void processConection();
 	bool configureConnection();
 	void processReservation(char* buff);
+	void processIdle();
 private:
 	string processLogin(char* buff);
 	SOCKET clientSocket;

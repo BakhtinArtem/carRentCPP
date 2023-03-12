@@ -89,7 +89,7 @@ void Client::processConection()
 				cout << "Login was unsuccessful" << endl;
 				return;			//	login was unsuccessful
 			}
-			this->state = reservation;
+			this->state = idle;
 		}
 		else if (this->state == reservation) {
 			processReservation(buff);
@@ -99,15 +99,27 @@ void Client::processConection()
 			}
 			this->state = idle;
 		}
+		else if (this->state == idle) {
+			processIdle();
+			if (this->state == error) {
+				cout << "Option does not exist" << endl;
+				return;
+			}
+		}
 	}
 }
 
 void Client::processReservation(char* buff)
 {
-	recv(this->clientSocket, buff, 4096, 0);
+	// send request to get list cars
+	string request = REQUEST_CARS_LIST;
+	send(this->clientSocket, request.c_str(), request.size(), 0);
+	request.clear();	//	clear request for futher use
+
+	recv(this->clientSocket, buff, 4096, 0);	//	get cars list
 	cout << buff << endl;
 	cout << "Choose car id to reserve:" << endl;
-	string id, request;
+	string id;
 	getline(cin, id);
 	request = REQUEST_RESERVATION + ";" + this->token + ";" + id;
 	//	send reservation request to server
@@ -115,7 +127,25 @@ void Client::processReservation(char* buff)
 	//	get response from server
 	ZeroMemory(buff, 4096);
 	recv(this->clientSocket, buff, 4096, 0);
-	cout << buff << endl;
+	if (buff == ERROR_RESPONSE) {
+		this->state = error;
+	}
+}
+
+void Client::processIdle()
+{
+	cout << CLIENT_OPTIONS << endl;
+	string response;
+	getline(cin, response);
+	if (response == "1") {
+		this->state = reservation;
+	}
+	else if (response == "2") {
+		this->state = endReservation;
+	}
+	else {
+		this->state = error;
+	}
 }
 
 string Client::processLogin(char* buff)
