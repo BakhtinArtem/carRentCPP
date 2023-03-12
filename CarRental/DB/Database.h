@@ -9,4 +9,5 @@ public:
 	string getAllCars();
 	bool carIsReserved(const string& id);
 	bool existOrderWithCarId(const string& id);
+	bool userIsRoot(const string& name);
 };

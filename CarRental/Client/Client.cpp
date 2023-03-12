@@ -106,6 +106,10 @@ void Client::processConection()
 				return;
 			}
 		}
+		else if (this->state == logout) {
+			processLogout();
+			return;
+		}
 	}
 }
 
@@ -121,7 +125,7 @@ void Client::processReservation(char* buff)
 	cout << "Choose car id to reserve:" << endl;
 	string id;
 	getline(cin, id);
-	request = REQUEST_RESERVATION + ";" + this->token + ";" + id;
+	request = REQUEST_RESERVATION + delimetr + this->token + delimetr + id;
 	//	send reservation request to server
 	send(this->clientSocket, request.c_str(), request.size(), 0);
 	//	get response from server
@@ -143,9 +147,18 @@ void Client::processIdle()
 	else if (response == "2") {
 		this->state = endReservation;
 	}
+	else if (response == "3") {
+		this->state = logout;
+	}
 	else {
 		this->state = error;
 	}
+}
+
+void Client::processLogout()
+{
+	string request = REQUEST_LOGOUT + delimetr + token;
+	send(this->clientSocket, request.c_str(), request.size(), 0);
 }
 
 string Client::processLogin(char* buff)
@@ -155,7 +168,7 @@ string Client::processLogin(char* buff)
 	getline(cin, login);
 	cout << "Please enter password:" << endl;
 	getline(cin, pass);
-	request = REQUEST_LOGIN + ";" + login + ";" + pass;
+	request = REQUEST_LOGIN + delimetr + login + delimetr + pass;
 	//	send request to sever
 	send(this->clientSocket, request.c_str(), request.size(), 0);
 	//	get response

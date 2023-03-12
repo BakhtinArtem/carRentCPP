@@ -79,3 +79,32 @@ bool Database::existOrderWithCarId(const string& id)
 	}
 	return false;
 }
+
+bool Database::userIsRoot(const string& name)
+{
+	ifstream infile(USERS_FILE_PATH);
+	if (!infile.good()) {
+		cout << "File not found" << endl;
+		return "";
+	}
+
+	string line, id, db_name, pass, permission;
+	while (getline(infile, line)) {
+		stringstream streamLine(line);
+		getline(streamLine, id, delimetr);
+		getline(streamLine, db_name, delimetr);
+		if (db_name != name) {
+			continue;
+		}
+		getline(streamLine, pass, delimetr);
+		getline(streamLine, permission, delimetr);
+		//	check if user has root permission
+		if (permission == ROOT_PERMISSION) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	return false;
+}

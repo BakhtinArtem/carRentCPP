@@ -1,2 +1,2 @@
-0;duck;123
-1;root;123
+0;duck;123;user
+1;root;123;root

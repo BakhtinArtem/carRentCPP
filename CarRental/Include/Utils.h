@@ -17,9 +17,17 @@ const string REQUEST_LOGIN = "login";
 const string REQUEST_NEW_USER = "newuser";
 const string REQUEST_RESERVATION = "reserve";
 const string REQUEST_CARS_LIST = "getcars";
+const string REQUEST_LOGOUT = "logout";
 
+//	PERMISSION
+const string ROOT_PERMISSION = "root";
+const string USER_PERMISSION = "user";
 
 const string RESERVE_OPTION = "Reserve a car";
 const string RETURN_OPTION = "Return a car";
-const string CLIENT_OPTIONS = "1." + WHITESPACE + RESERVE_OPTION + NEW_LINE + "2." + WHITESPACE + RETURN_OPTION;
+const string LOGOUT_OPTION = "Logout";
+const string CLIENT_OPTIONS = \
+	"1." + WHITESPACE + RESERVE_OPTION + NEW_LINE + \
+	"2." + WHITESPACE + RETURN_OPTION + NEW_LINE + \
+	"3." + WHITESPACE + LOGOUT_OPTION;
 

@@ -90,7 +90,7 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 				
 	if (request == REQUEST_LOGIN) {
 		cout << "processLogin" << endl;
-		if (processLogin(currentSocket, buffStream, db, login)) {
+		if (!processLogin(currentSocket, buffStream, db, login)) {
 			cout << "Login was unsuccessful" << endl;
 			return;
 		}
@@ -109,6 +109,9 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 		}
 		send(currentSocket, OK_RESPONE.c_str(), OK_RESPONE.size(), 0);
 	}
+	else if (request == REQUEST_LOGOUT) {
+		processLogout(currentSocket, login, buffStream);
+	}
 }
 
 bool WinSocket::processReservation(const SOCKET& currentSocket, stringstream& buffStream, IDatabase& db)
@@ -121,6 +124,14 @@ bool WinSocket::processReservation(const SOCKET& currentSocket, stringstream& bu
 	}
 	// WRITE RESERVATION
 	return true;
+}
+
+void WinSocket::processLogout(const SOCKET& currentSocket, ILogin& login, stringstream& buffStream)
+{
+	string token;
+	getline(buffStream, token);
+	login.logout(token);
+	disconnectClient(currentSocket);
 }
 
 void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {

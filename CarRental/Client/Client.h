@@ -10,6 +10,7 @@ enum CLIENT_STATE {
 	reservation,
 	endReservation,
 	idle,
+	logout,
 	error
 };
 
@@ -21,6 +22,7 @@ public:
 	bool configureConnection();
 	void processReservation(char* buff);
 	void processIdle();
+	void processLogout();
 private:
 	string processLogin(char* buff);
 	SOCKET clientSocket;
