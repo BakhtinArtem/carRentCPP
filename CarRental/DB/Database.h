@@ -11,6 +11,7 @@ public:
 	bool existOrderWithCarId(const string& id);
 	bool userIsRoot(const string& name);
 	void addCar(const string& carName);
+	int getCurrentIndex(const string& filePath);
 private:
 	int usersId;
 	int carsId;

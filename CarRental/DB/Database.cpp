@@ -13,9 +13,9 @@ const string USERS_ORDERS_PATH = "..\\..\\..\\DB\\Files\\orders.txt";
 const string USERS_CARS_PATH = "..\\..\\..\\DB\\Files\\cars.txt";
 
 void Database::init() {
-	this->usersId = 5;
-	this->carsId = 5;
-	this->orderId = 5;
+	this->usersId = getCurrentIndex(USERS_FILE_PATH) + 1;
+	this->orderId = getCurrentIndex(USERS_ORDERS_PATH) + 1;
+	this->carsId = getCurrentIndex(USERS_CARS_PATH) + 1;
 }
 
 int Database::findUserByNamePass(const string& name, const string& pass)
@@ -116,4 +116,20 @@ void Database::addCar(const string& carName)
 	fstream out(USERS_CARS_PATH, ios::app);
 	out << to_string(this->carsId++) << delimetr << carName << endl;
 	out.close();
+}
+
+int Database::getCurrentIndex(const string& filePath)
+{
+	//	get last index of orders
+	ifstream in(filePath);
+	string line, id = "0";
+	while (getline(in, line)) {
+		if (line == "") {
+			continue;
+		}
+		stringstream ss(line);
+		getline(ss, id, delimetr);
+	}
+	in.close();
+	return stoi(id);
 }
