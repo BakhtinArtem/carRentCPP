@@ -12,5 +12,5 @@ public:
 	virtual string getAllCars() = 0;
 	virtual bool carIsReserved(const string& id) = 0;
 	virtual bool userIsRoot(const string& name) = 0;
-
+	virtual void addCar(const string& carName) = 0;
 };

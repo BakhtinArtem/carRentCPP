@@ -13,7 +13,9 @@ const string USERS_ORDERS_PATH = "..\\..\\..\\DB\\Files\\orders.txt";
 const string USERS_CARS_PATH = "..\\..\\..\\DB\\Files\\cars.txt";
 
 void Database::init() {
-	cout << "Database is initialitated" << endl;
+	this->usersId = 5;
+	this->carsId = 5;
+	this->orderId = 5;
 }
 
 int Database::findUserByNamePass(const string& name, const string& pass)
@@ -107,4 +109,11 @@ bool Database::userIsRoot(const string& name)
 		}
 	}
 	return false;
+}
+
+void Database::addCar(const string& carName)
+{
+	fstream out(USERS_CARS_PATH, ios::app);
+	out << to_string(this->carsId++) << delimetr << carName << endl;
+	out.close();
 }

@@ -11,6 +11,8 @@ enum CLIENT_STATE {
 	endReservation,
 	idle,
 	logout,
+	addCar,
+	deleteCar,
 	error
 };
 
@@ -23,7 +25,10 @@ public:
 	void processReservation(char* buff);
 	void processIdle();
 	void processLogout();
+	bool isUserRoot(char* buff);
+	void processCarAdding(char* buff);
 private:
+	bool isRoot;
 	string processLogin(char* buff);
 	SOCKET clientSocket;
 	CLIENT_STATE state;

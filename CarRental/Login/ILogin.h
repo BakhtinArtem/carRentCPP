@@ -13,4 +13,6 @@ public:
 	virtual string getSessionToken(IDatabase& db, const string& name, const string& pass) = 0;
 	virtual string getUserId(const string& token) = 0;
 	virtual void logout(const string& token) = 0;
+	virtual bool userIsRoot(IDatabase& db, const string& name) = 0;
+	virtual bool userIsRoot(const string& token) = 0;
 };

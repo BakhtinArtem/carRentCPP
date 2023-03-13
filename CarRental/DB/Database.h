@@ -10,4 +10,9 @@ public:
 	bool carIsReserved(const string& id);
 	bool existOrderWithCarId(const string& id);
 	bool userIsRoot(const string& name);
+	void addCar(const string& carName);
+private:
+	int usersId;
+	int carsId;
+	int orderId;
 };

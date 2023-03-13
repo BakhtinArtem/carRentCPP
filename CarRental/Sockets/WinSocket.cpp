@@ -89,7 +89,6 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 	getline(buffStream, request, delimetr);
 				
 	if (request == REQUEST_LOGIN) {
-		cout << "processLogin" << endl;
 		if (!processLogin(currentSocket, buffStream, db, login)) {
 			cout << "Login was unsuccessful" << endl;
 			return;
@@ -102,7 +101,6 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 		cout << "processRequest" << endl;
 	}
 	else if (request == REQUEST_RESERVATION) {
-		cout << "processReservation" << endl;
 		if (!processReservation(currentSocket, buffStream, db)) {
 			send(currentSocket, CAR_UNAVAILABLE.c_str(), CAR_UNAVAILABLE.size(), 0);
 			return;		//	can not reserv
@@ -111,6 +109,12 @@ void WinSocket::processRequest(const SOCKET& currentSocket, IDatabase& db, ILogi
 	}
 	else if (request == REQUEST_LOGOUT) {
 		processLogout(currentSocket, login, buffStream);
+	}
+	else if (request == REQUEST_USER_IS_ROOT) {
+		processRoot(currentSocket, login, buffStream);
+	}
+	else if (request == REQUEST_ADD_CAR) {
+		processCarAdding(currentSocket, db, buffStream);
 	}
 }
 
@@ -134,6 +138,28 @@ void WinSocket::processLogout(const SOCKET& currentSocket, ILogin& login, string
 	disconnectClient(currentSocket);
 }
 
+void WinSocket::processRoot(const SOCKET& currentSocket, ILogin& login, stringstream& buffStream)
+{
+	string token;
+	getline(buffStream, token, delimetr);
+	//	send response back
+	if (login.userIsRoot(token)) {
+		send(currentSocket, TRUE_RESPONE.c_str(), TRUE_RESPONE.size(), 0);
+	}
+	else {
+		send(currentSocket, FALSE_RESPONSE.c_str(), FALSE_RESPONSE.size(), 0);
+	}
+}
+
+void WinSocket::processCarAdding(const SOCKET& currentSocket, IDatabase& db, stringstream& buffStream)
+{
+	string token, carName;
+	getline(buffStream, token, delimetr);
+	getline(buffStream, carName, delimetr);
+	db.addCar(carName);
+	send(currentSocket, OK_RESPONE.c_str(), OK_RESPONE.size(), 0);
+}
+
 void WinSocket::sendAvailableCars(const SOCKET& currentSocket, IDatabase& db) {
 	const string cars = db.getAllCars();
 	send(currentSocket, cars.c_str(), cars.size(), 0);
@@ -155,8 +181,7 @@ bool WinSocket::processLogin(const SOCKET& currentSocket, stringstream& buffStre
 		cout << "yes user" << endl;
 		string token = login.getSessionToken(db, name, pass);
 		cout << token << endl;
-		send(currentSocket, token.c_str(),
-			token.size(), 0);
+		send(currentSocket, token.c_str(), token.size(), 0);
 		return true;		//	login was successful
 	}
 	else {

@@ -20,6 +20,8 @@ private:
 	void sendAvailableCars(const SOCKET& currentSocket, IDatabase& db);
 	bool processReservation(const SOCKET& currentSocket, stringstream& buffStream, IDatabase& db);
 	void processLogout(const SOCKET& currentSocket, ILogin& login, stringstream& buffStream);
+	void processRoot(const SOCKET& currentSocket, ILogin& login, stringstream& buffStream);
+	void processCarAdding(const SOCKET& currentSocket, IDatabase& db, stringstream& buffStream);
 	SOCKET listening;
 	fd_set master;
 };

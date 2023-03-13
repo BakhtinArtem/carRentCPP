@@ -89,6 +89,7 @@ void Client::processConection()
 				cout << "Login was unsuccessful" << endl;
 				return;			//	login was unsuccessful
 			}
+			this->isRoot = isUserRoot(buff);
 			this->state = idle;
 		}
 		else if (this->state == reservation) {
@@ -109,6 +110,10 @@ void Client::processConection()
 		else if (this->state == logout) {
 			processLogout();
 			return;
+		}
+		else if (this->state == addCar) {
+			processCarAdding(buff);
+			this->state = idle;
 		}
 	}
 }
@@ -138,14 +143,30 @@ void Client::processReservation(char* buff)
 
 void Client::processIdle()
 {
-	cout << CLIENT_OPTIONS << endl;
+	if (this->isRoot) {
+		cout << ROOT_OPTIONS << endl;
+	}
+	else
+	{
+		cout << CLIENT_OPTIONS << endl;
+	}
 	string response;
 	getline(cin, response);
 	if (response == "1") {
-		this->state = reservation;
+		if (this->isRoot) {	//	other response if root
+			this->state = addCar;
+		}
+		else {
+			this->state = reservation;
+		}
 	}
 	else if (response == "2") {
-		this->state = endReservation;
+		if (this->isRoot) {	//	other response if root
+			this->state = deleteCar;
+		}
+		else {
+			this->state = endReservation;
+		}
 	}
 	else if (response == "3") {
 		this->state = logout;
@@ -159,6 +180,29 @@ void Client::processLogout()
 {
 	string request = REQUEST_LOGOUT + delimetr + token;
 	send(this->clientSocket, request.c_str(), request.size(), 0);
+}
+
+bool Client::isUserRoot(char* buff)
+{
+	string request = REQUEST_USER_IS_ROOT + delimetr + this->token;
+	send(this->clientSocket, request.c_str(), request.size(), 0);
+	ZeroMemory(buff, 4096);
+	recv(this->clientSocket, buff, 4096, 0);
+	if (buff == TRUE_RESPONE) {
+		return true;
+	}
+	return false;
+}
+
+void Client::processCarAdding(char* buff)
+{
+	cout << "Wrtie new car name:" << endl;
+	string carName;
+	getline(cin, carName);
+	string request = 
+		REQUEST_ADD_CAR + delimetr + this->token + delimetr + carName;
+	send(this->clientSocket, request.c_str(), request.size(), 0);
+	recv(this->clientSocket, buff, 4096, 0);	//	recv OK response
 }
 
 string Client::processLogin(char* buff)

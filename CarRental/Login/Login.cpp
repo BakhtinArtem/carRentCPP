@@ -18,7 +18,7 @@ string Login::getSessionToken(IDatabase& db, const string& name, const string& p
 	size_t token = hasher(name + pass);
 	const int userId = db.findUserByNamePass(name, pass);
 	if (userIsRoot(db, name)) {	//	add to root users in current session
-		rootUsers.push_back(to_string(userId));
+		rootUsers.push_back(to_string(token));
 	}
 	this->sessionStorage.insert({ to_string(token), to_string(userId)});
 	return to_string(token);
@@ -39,6 +39,11 @@ bool Login::userIsRoot(IDatabase& db, const string& name)
 	else {
 		return false;
 	}
+}
+
+bool Login::userIsRoot(const string& token)
+{
+	return find(this->rootUsers.begin(), this->rootUsers.end(), token) != this->rootUsers.end();
 }
 
 void Login::logout(const string& token)

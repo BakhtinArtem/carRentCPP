@@ -14,6 +14,7 @@ public:
 	string getSessionToken(IDatabase& db, const string& name, const string& pass);
 	string getUserId(const string& token);
 	bool userIsRoot(IDatabase& db, const string& name);
+	bool userIsRoot(const string& token);
 	void logout(const string& token);
 private:
 	unordered_map<string, string> sessionStorage;
